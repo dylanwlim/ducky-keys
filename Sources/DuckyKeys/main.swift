@@ -152,7 +152,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     @objc func openLoginSettings() { SMAppService.openSystemSettingsLoginItems() }
     @objc func about() {
         if aboutWindow == nil {
-            let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 350, height: 290), styleMask: [.titled, .closable], backing: .buffered, defer: false)
+            let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 350, height: 330), styleMask: [.titled, .closable], backing: .buffered, defer: false)
             window.title = "About Ducky Keys"; window.isReleasedWhenClosed = false
             let stack = NSStackView(); stack.orientation = .vertical; stack.spacing = 14
             stack.translatesAutoresizingMaskIntoConstraints = false
@@ -169,12 +169,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             text.addAttribute(.link, value: URL(string: "https://dylanwlim.com")!, range: NSRange(location: 8, length: 5))
             credit.attributedStringValue = text; credit.isSelectable = true; credit.allowsEditingTextAttributes = true
             stack.addArrangedSubview(credit)
+            let menuButton = NSButton(title: "Open Menu", target: self, action: #selector(showMenu))
+            menuButton.bezelStyle = .rounded
+            stack.addArrangedSubview(menuButton)
             window.contentView!.addSubview(stack)
             NSLayoutConstraint.activate([stack.centerXAnchor.constraint(equalTo: window.contentView!.centerXAnchor), stack.centerYAnchor.constraint(equalTo: window.contentView!.centerYAnchor), stack.widthAnchor.constraint(equalToConstant: 300)])
             window.center(); aboutWindow = window
         }
         NSApp.activate(ignoringOtherApps: true); aboutWindow?.makeKeyAndOrderFront(nil)
     }
+    @objc func showMenu() { statusItem.button?.performClick(nil) }
     @objc func quit() { NSApp.terminate(nil) }
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         guard engine != nil else { return .terminateNow }

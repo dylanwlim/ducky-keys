@@ -18,7 +18,7 @@ jobs:
       - name: Validate bundle
         run: |
           codesign --verify --strict 'dist/Ducky Keys.app'
-          lipo -verify_arch arm64 x86_64 'dist/Ducky Keys.app/Contents/MacOS/DuckyKeys'
+          python3 -c "import subprocess; assert set(subprocess.check_output(['lipo', '-archs', 'dist/Ducky Keys.app/Contents/MacOS/DuckyKeys'], text=True).split()) == {'arm64', 'x86_64'}"
           plutil -lint 'dist/Ducky Keys.app/Contents/Info.plist'
       - uses: actions/upload-artifact@v4
         with:
