@@ -1,0 +1,28 @@
+name: Build and test
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  macos:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test mapping lifecycle
+        run: swift test
+      - name: Build universal app
+        run: ./scripts/build.sh universal
+      - name: Validate bundle
+        run: |
+          codesign --verify --strict 'dist/Ducky Keys.app'
+          lipo -verify_arch arm64 x86_64 'dist/Ducky Keys.app/Contents/MacOS/DuckyKeys'
+          plutil -lint 'dist/Ducky Keys.app/Contents/Info.plist'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Ducky-Keys
+          path: |
+            dist/Ducky-Keys.zip
+            dist/SHA256SUMS.txt
