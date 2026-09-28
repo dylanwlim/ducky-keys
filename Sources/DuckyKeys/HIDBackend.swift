@@ -59,11 +59,15 @@ final class DeviceWatcher {
                 startFallback()
             }
         }
+        // Some USB hubs replace HID service instances without delivering a
+        // notification through both registrations. Keep a slow reconciliation
+        // poll as a backstop so mappings recover after every reconnect.
+        startFallback()
     }
     private func startFallback() {
         guard fallbackTimer == nil else { return }
         let timer = DispatchSource.makeTimerSource(queue: .main)
-        timer.schedule(deadline: .now() + 10, repeating: .seconds(10), leeway: .seconds(3))
+        timer.schedule(deadline: .now() + 5, repeating: .seconds(5), leeway: .seconds(1))
         timer.setEventHandler { [weak self] in self?.onChange?() }
         fallbackTimer = timer
         timer.resume()
