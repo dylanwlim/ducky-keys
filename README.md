@@ -1,6 +1,6 @@
 # Ducky Keys
 
-A small native Mac menu bar app for Ducky keyboards. Left Control becomes Command, and the left Windows key becomes Control. Right-side modifiers stay unchanged.
+A small native Mac menu bar app for Ducky keyboards and the Alienware ASM201 USB keyboard. Left Control becomes Command, and the left Windows key becomes Control. Right-side modifiers stay unchanged.
 
 Made by [Dylan](https://dylanwlim.com).
 
@@ -16,7 +16,7 @@ Click the keyboard icon in the menu bar:
 - **Check for Updates** is intentionally disabled. Download updates from GitHub.
 - **About Ducky Keys…** includes the clickable author link.
 
-Ducky-named external keyboards are detected automatically over Bluetooth, USB, and a wireless receiver. The known USB ID `3233:0018` is also recognized. A receiver with a different ID and no Ducky name is not automatically selected. Bluetooth and receiver modes can expose different identities.
+Ducky-named external keyboards are detected automatically over Bluetooth, USB, and a wireless receiver. The known Ducky USB ID `3233:0018` and Alienware ASM201 USB ID `04ca:0027` are also recognized. Other Lite-On devices are not selected based on vendor alone. Bluetooth and receiver modes can expose different identities.
 
 Pause or quit to restore the prior Control/Windows mapping. Disconnecting the keyboard clears its temporary macOS mapping. The built-in keyboard and virtual keyboards are excluded.
 

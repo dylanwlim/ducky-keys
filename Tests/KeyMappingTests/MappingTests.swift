@@ -10,11 +10,13 @@ final class MappingTests {
         Keyboard(id: id, name: name, vendor: vendor, product: product, transport: transport, builtIn: builtIn, isKeyboard: isKeyboard)
     }
 
-    @Test func testRecognizesConfiguredPairAndDuckyBluetoothName() {
-        #expect(keyboard(name: "Wireless Keyboard").isDucky(savedNames: []))
-        #expect(keyboard(name: "DUCKY One X", vendor: 7, product: 8, transport: "Bluetooth Low Energy").isDucky(savedNames: []))
-        #expect(keyboard(name: "Office board", vendor: 7, product: 8, transport: "Bluetooth").isDucky(savedNames: ["office BOARD"]))
-        #expect(!(keyboard(name: "Office board", vendor: 7, product: 8, transport: "USB").isDucky(savedNames: ["Office board"])))
+    @Test func testRecognizesConfiguredPairDuckyNameAndAlienwareUSBId() {
+        #expect(keyboard(name: "Wireless Keyboard").isSupported(savedNames: []))
+        #expect(keyboard(name: "DUCKY One X", vendor: 7, product: 8, transport: "Bluetooth Low Energy").isSupported(savedNames: []))
+        #expect(keyboard(name: "Office board", vendor: 7, product: 8, transport: "Bluetooth").isSupported(savedNames: ["office BOARD"]))
+        #expect(!(keyboard(name: "Office board", vendor: 7, product: 8, transport: "USB").isSupported(savedNames: ["Office board"])))
+        #expect(keyboard(name: "USB Multimedia Keyboard", vendor: 0x04ca, product: 0x0027).isSupported(savedNames: []))
+        #expect(!(keyboard(name: "Other Lite-On Keyboard", vendor: 0x04ca, product: 0x0020).isSupported(savedNames: [])))
     }
 
     @Test func testRejectsBuiltInVirtualNonKeyboardAndSharedVendor() {
@@ -28,7 +30,7 @@ final class MappingTests {
             keyboard(name: "Unrelated keyboard", product: 0x0199),
             keyboard(name: "Unrelated keyboard", vendor: 9, product: 8)
         ]
-        for device in excluded { #expect(!(device.isDucky(savedNames: [device.name])), Comment(rawValue: device.name)) }
+        for device in excluded { #expect(!(device.isSupported(savedNames: [device.name])), Comment(rawValue: device.name)) }
     }
 
     @Test func testSwapReplacesOnlyLeftControlAndLeftCommand() {

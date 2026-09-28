@@ -79,7 +79,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let status: String
         if !engine.failures.isEmpty { status = "Mapping needs attention" }
         else if !enabled { status = "Paused" }
-        else if engine.connected.isEmpty { status = "Waiting for your Ducky" }
+        else if engine.connected.isEmpty { status = "Waiting for a supported keyboard" }
         else { status = "Active · \(engine.connected.first!.name)" }
         item(status, enabled: false)
         statusItem.button?.toolTip = "Ducky Keys: \(status)"
@@ -123,7 +123,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     @objc func bluetoothName() {
         let alert = NSAlert()
         alert.messageText = "Your Bluetooth keyboard"
-        alert.informativeText = "Ducky-named keyboards are detected automatically. If yours was renamed, enter its exact Bluetooth name. Leave blank to use automatic detection."
+        alert.informativeText = "Ducky-named keyboards and the Alienware ASM201 USB keyboard are detected automatically. If your Bluetooth keyboard was renamed, enter its exact name. Leave blank to use automatic detection."
         let field = NSTextField(string: names.first ?? "")
         field.placeholderString = "Bluetooth name"
         field.frame = NSRect(x: 0, y: 0, width: 320, height: 24)
@@ -162,7 +162,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             let title = NSTextField(labelWithString: "Ducky Keys")
             title.font = .boldSystemFont(ofSize: 22); stack.addArrangedSubview(title)
             stack.addArrangedSubview(NSTextField(labelWithString: "Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0")"))
-            let description = NSTextField(wrappingLabelWithString: "Your Ducky. Your Mac shortcuts.\nBluetooth, dongle, or USB.\n\nUse the keyboard icon in your menu bar.")
+            let description = NSTextField(wrappingLabelWithString: "Your keyboard. Your Mac shortcuts.\nDucky keyboards and Alienware ASM201.\n\nUse the keyboard icon in your menu bar.")
             description.alignment = .center; stack.addArrangedSubview(description)
             let credit = NSTextField(labelWithString: "")
             let text = NSMutableAttributedString(string: "Made by Dylan", attributes: [.font: NSFont.systemFont(ofSize: 13)])
@@ -198,10 +198,10 @@ if CommandLine.arguments.contains("--diagnostics") {
     let scan = backend.keyboards()
     let keyboards = scan ?? []
     let names = UserDefaults.standard.stringArray(forKey: "bluetoothNames") ?? []
-    let report: [String: Any] = ["enumerationSucceeded": scan != nil, "keyboardCount": keyboards.count, "duckyCount": keyboards.filter { $0.isDucky(savedNames: names) }.count,
+    let report: [String: Any] = ["enumerationSucceeded": scan != nil, "keyboardCount": keyboards.count, "supportedKeyboardCount": keyboards.filter { $0.isSupported(savedNames: names) }.count,
         "startAtLogin": SMAppService.mainApp.status == .enabled,
         "enabled": UserDefaults.standard.object(forKey: "enabled") as? Bool ?? true,
-        "keyboards": keyboards.map { ["name": $0.name, "builtIn": $0.builtIn, "matched": $0.isDucky(savedNames: names), "mappingCount": backend.read($0.id)?.count ?? -1] as [String: Any] }]
+        "keyboards": keyboards.map { ["name": $0.name, "vendor": $0.vendor, "product": $0.product, "transport": $0.transport, "builtIn": $0.builtIn, "matched": $0.isSupported(savedNames: names), "mappingCount": backend.read($0.id)?.count ?? -1] as [String: Any] }]
     let data = try! JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys])
     print(String(data: data, encoding: .utf8)!)
 } else {

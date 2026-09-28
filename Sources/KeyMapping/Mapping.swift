@@ -28,11 +28,13 @@ public struct Keyboard: Equatable {
         self.transport = transport; self.builtIn = builtIn; self.isKeyboard = isKeyboard
     }
     public var fingerprint: String { "\(vendor):\(product):\(name):\(transport)" }
-    public func isDucky(savedNames: [String]) -> Bool {
+    public func isSupported(savedNames: [String]) -> Bool {
         let lower = name.lowercased()
         guard isKeyboard, !builtIn, vendor != 0x05ac,
               !lower.contains("virtual"), !lower.contains("karabiner") else { return false }
-        // Exact pair from the existing Ducky configuration, never an OEM vendor alone.
+        // Match the Alienware ASM201's exact USB ID, never the Lite-On vendor alone.
+        if vendor == 0x04ca && product == 0x0027 { return true }
+        // Exact pair from the existing Ducky configuration.
         return (vendor == 0x3233 && product == 0x0018)
             || lower.split(whereSeparator: { !$0.isLetter && !$0.isNumber }).contains("ducky")
             || (transport.lowercased().contains("bluetooth") && savedNames.contains { $0.caseInsensitiveCompare(name) == .orderedSame })
@@ -68,13 +70,13 @@ public final class MappingEngine {
         }
         let live = Dictionary(uniqueKeysWithValues: devices.map { ($0.id, $0) })
         owned = owned.filter { live[$0.key]?.fingerprint == $0.value.fingerprint }
-        connected = devices.filter { $0.isDucky(savedNames: savedNames) }
+        connected = devices.filter { $0.isSupported(savedNames: savedNames) }
         for device in devices {
             guard let current = backend.read(device.id) else {
-                if owned[device.id] != nil || device.isDucky(savedNames: savedNames) { failures.append(device.name) }
+                if owned[device.id] != nil || device.isSupported(savedNames: savedNames) { failures.append(device.name) }
                 continue
             }
-            let shouldApply = enabled && device.isDucky(savedNames: savedNames)
+            let shouldApply = enabled && device.isSupported(savedNames: savedNames)
             if let entry = owned[device.id] {
                 if !shouldApply {
                     // Restore our two keys, preserving later edits to unrelated keys.
