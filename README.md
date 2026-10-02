@@ -6,14 +6,14 @@ Made by [Dylan](https://dylanwlim.com).
 
 ## Use
 
-Download **Ducky-Keys.zip** from [Releases](https://github.com/dylanwlim/ducky-keys/releases/latest), unzip it, move **Ducky Keys.app** to Applications, and open it. Requires macOS 13 or later, on Apple silicon or Intel.
+A downloadable release is not currently available. If you already have a **Ducky Keys.app** copy, move it to Applications and open it. Requires macOS 13 or later, on Apple silicon or Intel.
 
 Click the keyboard icon in the menu bar:
 
 - **Swap Control and Windows** pauses or enables the mapping.
 - **Bluetooth Keyboard…** lets you enter the exact name if you renamed your Ducky.
 - **Start at Login** keeps it ready after signing in.
-- **Check for Updates** is intentionally disabled. Download updates from GitHub.
+- **Check for Updates** is intentionally disabled.
 - **About Ducky Keys…** includes the clickable author link.
 
 Ducky-named external keyboards and the Alienware ASM201 are supported. If your Bluetooth keyboard is not recognized, use **Bluetooth Keyboard…** to enter its exact name. Recognition can vary between connection modes.
