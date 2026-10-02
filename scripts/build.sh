@@ -24,4 +24,7 @@ codesign --verify --strict "$app"
 mkdir -p dist
 /usr/bin/ditto -c -k --sequesterRsrc --keepParent "$app" dist/Ducky-Keys.zip
 /usr/bin/ditto --norsrc --noextattr "$app" "dist/Ducky Keys.app"
+xattr -dr com.apple.FinderInfo "dist/Ducky Keys.app" 2>/dev/null || true
+xattr -dr com.apple.ResourceFork "dist/Ducky Keys.app" 2>/dev/null || true
+codesign --verify --strict "dist/Ducky Keys.app"
 (cd dist && shasum -a 256 Ducky-Keys.zip > SHA256SUMS.txt)
